@@ -18,7 +18,7 @@ entity brg is
 end entity;
 
 architecture rtl of brg is
-	constant M: positive := B * CLK_FRQ / 1000; /* scaler */
+	constant M: positive := CLK_FRQ / (B * 1000); /* scaler */
 	signal i: natural range from 0 to M - 1 := 0;
 	signal r: std_logic := '0'; /* hold output clock */
 begin
