@@ -6,7 +6,7 @@ use ieee.numeric_std.all;
 
 entity urx is
 	generic (
-		-- pass
+		--pass
 	);
 	port (
 		clk: in std_logic; /* system clock */
@@ -17,6 +17,12 @@ entity urx is
 end entity;
 
 architecture rtl of urx is
-	type s is (idle, startbit, databit, stopbit, flush);
+	type state is (idle, startbit, databit, stopbit, flush);
+	signal s: state := idle;
+	signal rxd: std_logic := '0';
+	signal rxb: std_logic_vector(7 downto 0) := (others => '0'); /* byte */
+	signal i: natural range 0 to 7 := 0; /* one byte in total */
+	--signal cnt: natural range 0 to ___ :=0;
+
 end architecture;
 		
