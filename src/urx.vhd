@@ -40,9 +40,22 @@ begin
 		if rising_edge(clk) then
 			case s is
 				when idle =>
-					-- pass
+					d <= '0';
+					c <= 0;
+					i <= 0;
 				when startbit =>
-					-- pass
+					if c = (N - 1) / 2 then
+						if d = '0' then
+							c <= 0; /* middle */
+							s <= databit;
+						else
+							s <= idle;
+						end if;
+					else
+						c <= c + 1;
+						s <= startbit;
+					end if;
+
 				when databit =>
 					-- pass
 				when stopbit =>
