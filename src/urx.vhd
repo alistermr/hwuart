@@ -6,27 +6,33 @@ use ieee.numeric_std.all;
 
 entity urx is
 	generic (
-		--pass
+		constant SCLK_FREQ: positive := 50; /* system clock in MHz */
+		constant BAUD_RATE: positive := 9600; /* B/s */
 	);
 	port (
 		clk: in std_logic; /* system clock */
-		rxs: in std_logic; /* rx serial in */
-		rxd: out std_logic; /* data vector */
+		rxi: in std_logic; /* rx serial in */
+		vld: out std_logic; /* data valid */
 		rxb: out std_logic  /* rx out byte */
 	);
 end entity;
 
 architecture rtl of urx is
+	constant N: positive := SCLK_FREQ / BAUD_RATE;
+
 	type state is (idle, startbit, databit, stopbit, flush);
 	signal s: state := idle;
-	signal rxd: std_logic := '0';
-	signal rxb: std_logic_vector(7 downto 0) := (others => '0'); /* byte */
-	signal i: natural range 0 to 7 := 0; /* one byte in total */
-	--signal cnt: natural range 0 to ___ :=0;
+
+	signal d: std_logic := '0'; /* rx serial data in */
+	signal b: std_logic_vector(7 downto 0) := (others => '0'); /*byte out*/
+
+	signal i: natural range 0 to 7 := 0; /* index */
+	signal c: natural range 0 to N - 1 := 0; /* counter */
+
 begin
 	read: process(clk) begin
 		if rising_edge(clk) then
-			rxd <= rxs; /* read rx serial into rx data */
+			d <= rxi; /* read rx serial into rx data */
 		end if;
 	end process;
 
