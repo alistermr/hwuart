@@ -23,6 +23,28 @@ architecture rtl of urx is
 	signal rxb: std_logic_vector(7 downto 0) := (others => '0'); /* byte */
 	signal i: natural range 0 to 7 := 0; /* one byte in total */
 	--signal cnt: natural range 0 to ___ :=0;
+begin
+	read: process(clk) begin
+		if rising_edge(clk) then
+			rxd <= rxs; /* read rx serial into rx data */
+		end if;
+	end process;
 
+	main: process(clk) begin
+		if rising_edge(clk) then
+			case s is
+				when idle =>
+					-- pass
+				when startbit =>
+					-- pass
+				when databit =>
+					-- pass
+				when stopbit =>
+					-- pass
+				when flush =>
+					-- pass
+			end case;
+		end if;
+	end process;
 end architecture;
 		
