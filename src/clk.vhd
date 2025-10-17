@@ -20,4 +20,20 @@ architechture rtl of clkd is
 	signal sck: std_logic := '0';  /* scaled clock */
 	signal cnt: natural range from 0 to M - 1 := '0';
 
+begin
+	/* presc:  prescale clock */
+	presc: process(clk, rst) begin
+		if rst = '0' then
+			cnt <= 0;
+			sck <= '0';
+		else rising_edge(clk) then
+			if cnt = M - 1 then
+				cnt <= 0;
+				sck <= not sck;
+			else
+				i <= i + 1;
+			end if;
+		end if;
+	end process;
+
 end architechture;
