@@ -7,7 +7,7 @@ use ieee.numeric_std.all;
 entity brg is
 	generic (
 		constant BAUD_RATE: positive := 9600; /* B/s */
-		constant SCLK_FREQ: positive := 50; /* sys clk in MHz */
+		constant SCLK_FREQ: positive := 50 /* sys clk in MHz */
 	);
 	port (
 		clk: in std_logic; /* system clock */
@@ -18,7 +18,7 @@ end entity;
 
 architecture rtl of brg is
 	constant M: positive := 1_000_000 * SCLK_FREQ / BAUD_RATE; /* max */
-	signal cnt: natural range from 0 to M - 1 := 0;
+	signal cnt: natural range 0 to M - 1 := 0;
 	signal reg: std_logic := '0';
 begin
 	gen: process(clk, rst) begin
