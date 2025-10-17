@@ -6,8 +6,8 @@ use ieee.numeric_std.all;
 
 entity brg is
 	generic (
-		constant B: positive := 9600; /* baud rate */
-		constant CLK_FRQ: positive := 50; /* MHz */
+		constant BAUD_RATE: positive := 9600; /* B/s */
+		constant SCLK_FREQ: positive := 50; /* sys clk in MHz */
 	);
 	port (
 		clk: in std_logic; /* system clock */
@@ -17,22 +17,27 @@ entity brg is
 end entity;
 
 architecture rtl of brg is
-	constant M: positive := CLK_FRQ / (B * 1000); /* roof */
-	signal i: natural range from 0 to M - 1 := 0;
-	signal r: std_logic := '0'; /* hold output clock */
+	constant M: positive := 1_000_000 * SCLK_FREQ / BAUD_RATE; /* max */
+	signal cnt: natural range from 0 to M - 1 := 0;
+	signal reg: std_logic := '0';
 begin
 	gen: process(clk, rst) begin
 		if rst = '1' then
-			i <= 0;
-			r <= '0';
+			cnt <= 0;
+			reg <= '0';
 		elsif rising_edge(clk) then
-			if i = M - 1 then
-				i <= 0;
-				r <= not r;
+			if cnt = M - 1 then
+				cnt <= 0;
+				reg <= not reg;
 			else
-				i <= i + 1;
+				cnt <= cnt + 1;
+				/*
+				 * uncomment to generate one pulse per baud
+				 * instead of a square wave clock signal
+				 */
+				--reg <= '0'; /* pulse */
 			end if;
 		end if;
 	end process;
-	bck <= r;
+	bck <= reg;
 end architecture;
