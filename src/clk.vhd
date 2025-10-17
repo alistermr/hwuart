@@ -15,11 +15,10 @@ entity clkd is
 	);
 end entity;
 
-architechture rtl of clkd is
+architecture rtl of clkd is
 	constant M: positive := CLK_FRQ * SCK_PER / 1000;  /* scaler */
 	signal sck: std_logic := '0';  /* scaled clock */
 	signal cnt: natural range from 0 to M - 1 := '0';
-
 begin
 	/* presc:  prescale clock */
 	presc: process(clk, rst) begin
@@ -35,5 +34,4 @@ begin
 			end if;
 		end if;
 	end process;
-
-end architechture;
+end architecture;
