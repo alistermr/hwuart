@@ -31,7 +31,7 @@ begin
 				cnt <= 0;
 				sck <= not sck;
 			else
-				i <= i + 1;
+				cnt <= cnt + 1;
 			end if;
 		end if;
 	end process;
