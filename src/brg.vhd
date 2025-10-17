@@ -2,13 +2,14 @@
 
 library ieee;
 use ieee.std_logic_1164.all;
-use ieee.std_numeric.all;
+use ieee.numeric_std.all;
 
 entity brg is
 	generic (
-		constant BDR: positive := 9600; /* baud rate */
+		constant B: positive := 9600; /* baud rate */
 		constant CLK_FRQ: positive := 50; /* MHz */
-		constant SCK_PER: positive := 20; /* scaled clk period in ns */
+		constant SCK_PER: positive := 20 /* scaled clk period in ns */
+	);
 	port (
 		clk: in std_logic; /* system clock */
 		rst: in std_logic; /* system reset */
@@ -17,22 +18,22 @@ entity brg is
 end entity;
 
 architecture rtl of brg is
-	constant M: positive := BRD * CLK_FRQ / 1000; /* scaler */
-	signal cnt: natural range from 0 to M - 1 := '0';
-	signal bck: std_logic := '0';  /* 'baud' clock */
+	constant M: positive := B * CLK_FRQ / 1000; /* scaler */
+	signal i: natural range from 0 to M - 1 := 0;
+	signal r: std_logic := '0'; /* hold output clock */
 begin
 	gen: process(clk, rst) begin
 		if rst = '0' then
-			cnt <= 0;
-			bck <= '0';
+			i <= 0;
+			r <= '0';
 		else rising_edge(clk) then
-			if cnt = M - 1 then
-				cnt <= 0;
-				bck <= not bck;
+			if i = M - 1 then
+				i <= 0;
+				r <= not r;
 			else
-				cnt <= cnt + 1;
+				i <= i + 1;
 			end if;
 		end if;
 	end process;
-	bck <= bck;
+	bck <= r;
 end architecture;
