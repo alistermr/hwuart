@@ -57,7 +57,12 @@ begin
 					end if;
 
 				when databit =>
-					-- pass
+					if c < N - 1 then
+						c <= c + 1;
+						s <= databit;
+					else
+						c <= 0;
+						b <=
 				when stopbit =>
 					-- pass
 				when flush =>
@@ -66,4 +71,3 @@ begin
 		end if;
 	end process;
 end architecture;
-		
