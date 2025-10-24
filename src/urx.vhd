@@ -6,62 +6,65 @@ use ieee.numeric_std.all;
 
 entity urx is
 	generic (
-		constant SCLK_FREQ: positive := 50; /* system clock in MHz */
+		constant BITWIDTH: positive := 8;
+		constant SYS_CLK_FRQ: positive := 50; /* MHz */
 		constant BAUD_RATE: positive := 9600; /* B/s */
 	);
 	port (
-		clk: in std_logic; /* system clock */
-		rxi: in std_logic; /* rx serial in */
-		vld: out std_logic; /* data valid */
-		rxb: out std_logic  /* rx out byte */
+		sclk: in std_logic; /* system clock */
+		si: in std_logic; /* serial in */
+		dv: out std_logic; /* data valid */
+		bo: out std_logic /* byte out */
 	);
 end entity;
 
 architecture rtl of urx is
-	constant N: positive := SCLK_FREQ / BAUD_RATE;
+	constant N: positive := SYS_CLK_FRQ / BAUD_RATE;
 
 	type state is (idle, startbit, databit, stopbit, flush);
 	signal s: state := idle;
 
 	signal d: std_logic := '0'; /* rx serial data in */
-	signal b: std_logic_vector(7 downto 0) := (others => '0'); /*byte out*/
+	signal b: std_logic_vector(BITWIDTH - 1 downto 0) := (others => '0'); /*byte out*/
 
-	signal i: natural range 0 to 7 := 0; /* index */
-	signal c: natural range 0 to N - 1 := 0; /* counter */
+	signal idx: natural range 0 to BITWIDTH - 1 := 0;
+	signal cnt: natural range 0 to N - 1 := 0;
 
 begin
-	read: process(clk) begin
-		if rising_edge(clk) then
-			d <= rxi; /* read rx serial into rx data */
+	/* read:  read rx serial data into rx data register */
+	read: process(sclk) begin
+		if rising_edge(sclk) then
+			d <= si;
 		end if;
 	end process;
 
-	main: process(clk) begin
-		if rising_edge(clk) then
+	/* main:  receiver state machine */
+	main: process(sclk) begin
+		if rising_edge(sclk) then
 			case s is
 				when idle =>
 					d <= '0';
-					c <= 0;
-					i <= 0;
+					cnt <= 0;
+					idx <= 0;
 				when startbit =>
-					if c = (N - 1) / 2 then
+					if cnt = (N - 1) / 2 then
 						if d = '0' then
-							c <= 0; /* middle */
+							cnt <= 0; /* middle */
 							s <= databit;
 						else
 							s <= idle;
 						end if;
 					else
-						c <= c + 1;
+						cnt <= cnt + 1;
 						s <= startbit;
 					end if;
 
 				when databit =>
-					if c < N - 1 then
-						c <= c + 1;
+					if cnt < N - 1 then
+						cnt <= cnt + 1;
 						s <= databit;
 					else
-						c <= 0;
+						cnt <= 0;
 						b <=
 				when stopbit =>
 					-- pass
