@@ -1,10 +1,5 @@
 /* baud rate generator */
 
-/*
- * TODO:
- * rename file and some signals to fit with other source files
-*/
-
 library ieee;
 use ieee.std_logic_1164.all;
 use ieee.numeric_std.all;
@@ -23,15 +18,16 @@ end entity;
 
 architecture rtl of brg is
 	constant MAX: positive := 1_000_000 * SYS_CLK_FRQ / BAUD_RATE; /* max */
-	signal cnt: natural range 0 to M - 1 := 0;
+	signal cnt: natural range 0 to MAX - 1 := 0;
 	signal reg: std_logic := '0';
 begin
+	/* clkgen:  generate baud rate clock */
 	clkgen: process(sclk, rstn) begin
 		if rstn = '0' then
 			cnt <= 0;
 			reg <= '0';
 		elsif rising_edge(clk) then
-			if cnt = M - 1 then
+			if cnt = MAX - 1 then
 				cnt <= 0;
 				reg <= not reg;
 			else
