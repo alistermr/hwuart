@@ -11,7 +11,7 @@ entity urx is
 		constant BAUD_RATE: positive := 9600; /* B/s */
 	);
 	port (
-		sclk: in std_logic; /* system clock */
+		clk: in std_logic; /* system clock */
 		si: in std_logic; /* serial in */
 		dv: out std_logic; /* data valid */
 		bo: out std_logic /* byte out */
@@ -32,15 +32,15 @@ architecture rtl of urx is
 
 begin
 	/* read:  read rx serial data into rx data register */
-	read: process(sclk) begin
-		if rising_edge(sclk) then
+	read: process(clk) begin
+		if rising_edge(clk) then
 			d <= si;
 		end if;
 	end process;
 
 	/* main:  receiver state machine */
-	main: process(sclk) begin
-		if rising_edge(sclk) then
+	main: process(clk) begin
+		if rising_edge(clk) then
 			case s is
 				when idle =>
 					d <= '0';
@@ -65,9 +65,9 @@ begin
 						s <= databit;
 					else
 						cnt <= 0;
-						b <=
+						b <= /* TODO: fix this */
 				when stopbit =>
-					-- pass
+					s <= idle;
 				when flush =>
 					-- pass
 			end case;
