@@ -1,0 +1,11 @@
+/* requirements */
+-- must support the UART protocol.
+	-- 1 start bit.
+	-- 8 data bits.
+	-- 1 stop bit.
+	-- no parity bits.
+-- must support baud rate of at least 9600.
+-- must be able to store the byte to be transmitted.
+-- must indicate with a signal that tx is busy.
+-- should support parity control (even, odd, none).
+-- should be able to change baud rate when running.
