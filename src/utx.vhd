@@ -34,7 +34,7 @@ architecture rtl of utx is
 	constant NVOTE: positive := 5; /* majority votes */
 	constant CLK_PER_BIT: positive := SYS_CLK_FRQ * 1000000 / BAUD_RATE;
 	constant CLK_PER_SAMP: positive := CLK_PER_BIT / NSAMP; /* cycles/samp */
-	
+
 	type state is (idle, startbit, databit, stopbit, flush);
 	signal s: state := idle;
 
@@ -46,6 +46,6 @@ begin
 
 	main: process(clk) begin
 		if rising_edge(clk) then
-			busy <= '0' when s = idle else '1';
+			bs <= '0' when s = idle else '1';
 
 end architecture;
