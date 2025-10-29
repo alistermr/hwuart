@@ -38,7 +38,7 @@ architecture rtl of urx is
 	constant NSAMP: positive := 8; /* Nx oversampling */
 	constant NVOTE: positive := 5; /* majority votes */
 	constant CLK_PER_BIT: positive := SYS_CLK_FRQ * 1000000 / BAUD_RATE;
-	constant CLK_PER_SAMP: positive := CLK_PER_BIT / NSAMP; /* cycles/samp */
+	constant CLK_PER_SMP: positive := CLK_PER_BIT / NSAMP; /* cycles/sample */
 
 	type state is (idle, startbit, databit, stopbit, flush);
 	signal s: state := idle;
@@ -46,7 +46,7 @@ architecture rtl of urx is
 	signal d: std_logic := '0'; /* rx serial data in */
 	signal b: std_logic_vector(BITWIDTH-1 downto 0):=(others=>'0');/*byte out*/
 	signal votes: natural range 0 to NVOTE := 0; /* ones in voting window */
-	signal samps: natural range 0 to CLK_PER_SAMP - 1 := 0; /* counter for sampling */
+	signal samps: natural range 0 to CLK_PER_SMP - 1 := 0;
 	signal idx: natural range 0 to BITWIDTH - 1 := 0;
 
 
@@ -72,7 +72,7 @@ begin
 					end if;
 
 				when startbit =>
-					if samps < CLK_PER_SAMP - 1 then
+					if samps < CLK_PER_SMP - 1 then
 						samps <= samps + 1;
 					else
 						samps <= 0;
@@ -89,7 +89,7 @@ begin
 					end if;
 
 				when databit =>
-					if samps < CLK_PER_SAMP - 1 then
+					if samps < CLK_PER_SMP - 1 then
 						samps <= samps + 1;
 						/* count ones in voting window */
 						if idx >= (NSAMP / 2 - NVOTE / 2)
@@ -120,7 +120,7 @@ begin
 					end if;
 
 				when stopbit =>
-					if samps < CLK_PER_SAMP - 1 then
+					if samps < CLK_PER_SMP - 1 then
 						samps <= samps + 1;
 					else
 						samps <= 0;
