@@ -9,3 +9,20 @@
 -- must indicate with a signal that tx is busy.
 -- should support parity control (even, odd, none).
 -- should be able to change baud rate when running.
+
+library ieee;
+use ieee.std_logic_1164.all;
+use ieee.numeric_std.all;
+
+entity utx is
+	generic (
+
+	);
+	port (
+
+	);
+end entity;
+
+architecture rtl of utx is
+begin
+end architecture;
