@@ -16,16 +16,10 @@
 
 /* TODO: non-critical: implement fifo, parity. */
 
-library ieee;
-use ieee.std_logic_1164.all;
-use ieee.numeric_std.all;
+library work;
+use work.pkg.all;
 
 entity urx is
-	generic (
-		constant BITWIDTH: positive := 8;
-		constant SYS_CLK_FRQ: positive := 50; /* MHz */
-		constant BAUD_RATE: positive := 9600; /* B/s */
-	);
 	port (
 		clk: in std_logic; /* system clock */
 		si: in std_logic; /* serial in */
@@ -35,21 +29,14 @@ entity urx is
 end entity;
 
 architecture rtl of urx is
-	constant NSAMP: positive := 8; /* Nx oversampling */
-	constant NVOTE: positive := 5; /* majority votes */
-	constant CLK_PER_BIT: positive := SYS_CLK_FRQ * 1000000 / BAUD_RATE;
-	constant CLK_PER_SMP: positive := CLK_PER_BIT / NSAMP; /* cycles/sample */
-
-	type state is (idle, startbit, databit, stopbit, flush);
+	constant NSAMP: positive := 8; /* oversampling */
+	constant NVOTE: positive := 5;
 	signal s: state := idle;
-
 	signal d: std_logic := '0'; /* rx serial data in */
 	signal b: std_logic_vector(BITWIDTH-1 downto 0):=(others=>'0');/*byte out*/
 	signal votes: natural range 0 to NVOTE := 0; /* ones in voting window */
 	signal samps: natural range 0 to CLK_PER_SMP - 1 := 0;
 	signal idx: natural range 0 to BITWIDTH - 1 := 0;
-
-
 begin
 	/* read:  read rx serial data into rx data register */
 	read: process(clk) begin

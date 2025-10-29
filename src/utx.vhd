@@ -10,16 +10,10 @@
 -- should support parity control (even, odd, none).
 -- should be able to change baud rate when running.
 
-library ieee;
-use ieee.std_logic_1164.all;
-use ieee.numeric_std.all;
+library work;
+use work.uart_pkg.all;
 
 entity utx is
-	generic (
-		constant BITWIDTH: positive := 8;
-		constant SYS_CLK_FRQ: positive := 50; /* MHz */
-		constant BAUD_RATE: positive := 9600; /* B/s */
-	);
 	port (
 		clk: in std_logic; /* system clock */
 		bi: in std_logic_vector(BITWIDTH-1 downto 0); /* byte in */
@@ -30,13 +24,7 @@ entity utx is
 end entity;
 
 architecture rtl of utx is
-	constant NSAMP: positive := 8; /* Nx oversampling */
-	constant NVOTE: positive := 5; /* majority votes */
-	constant CLK_PER_BIT: positive := SYS_CLK_FRQ * 1000000 / BAUD_RATE;
-	constant CLK_PER_SAMP: positive := CLK_PER_BIT / NSAMP; /* cycles/samp */
-
-	type state is (idle, startbit, databit, stopbit, flush);
-	signal s: state := idle;
+	signal s: state_t := idle;
 
 	signal d: std_logic := '1'; /* serial data out, active low */
 

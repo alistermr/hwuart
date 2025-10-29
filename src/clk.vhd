@@ -6,7 +6,7 @@ use ieee.numeric_std.all;
 
 entity clk is
 	generic (
-		constant BAUD_RATE: positive := 9600; /* B/s */
+		constant BAUDRATE: positive := 9600; /* B/s */
 		constant SYS_CLK_FRQ: positive := 50  /* MHz */
 	);
 	port (
@@ -17,7 +17,7 @@ entity clk is
 end entity;
 
 architecture rtl of clk is
-	constant MAX: positive := 1_000_000 * SYS_CLK_FRQ / BAUD_RATE; /* max */
+	constant MAX: positive := 1_000_000 * SYS_CLK_FRQ / BAUDRATE; /* max */
 	signal cnt: natural range 0 to MAX - 1 := 0;
 	signal reg: std_logic := '0'; /* output register */
 begin
