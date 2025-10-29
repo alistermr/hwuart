@@ -22,14 +22,30 @@ entity utx is
 	);
 	port (
 		clk: in std_logic; /* system clock */
-		bi: out std_logic /* byte in */
-		dv: out std_logic; /* data valid */
-		so: in std_logic; /* serial out */
+		bi: in std_logic_vector(BITWIDTH-1 downto 0); /* byte in */
+		dv: in std_logic; /* data valid */
+		bs: out std_logic; /* busy */
+		so: out std_logic; /* serial out */
 	);
 end entity;
 
 architecture rtl of utx is
+	constant NSAMP: positive := 8; /* Nx oversampling */
+	constant NVOTE: positive := 5; /* majority votes */
+	constant CLK_PER_BIT: positive := SYS_CLK_FRQ * 1000000 / BAUD_RATE;
+	constant CLK_PER_SAMP: positive := CLK_PER_BIT / NSAMP; /* cycles/samp */
+	
 	type state is (idle, startbit, databit, stopbit, flush);
-	signal s: state := idle;	
+	signal s: state := idle;
+
+	signal d: std_logic := '1'; /* serial data out, active low */
+
+
 begin
+	so <= d; /* put bit */
+
+	main: process(clk) begin
+		if rising_edge(clk) then
+			busy <= '0' when s = idle else '1';
+
 end architecture;
