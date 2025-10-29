@@ -1,14 +1,9 @@
 /* baud rate clock generator */
 
-library ieee;
-use ieee.std_logic_1164.all;
-use ieee.numeric_std.all;
+library work;
+use work.pkg.all;
 
 entity clk is
-	generic (
-		constant BAUDRATE: positive := 9600; /* B/s */
-		constant SYS_CLK_FRQ: positive := 50  /* MHz */
-	);
 	port (
 		sclk: in std_logic; /* system clock */
 		rstn: in std_logic; /* system reset */
@@ -17,7 +12,7 @@ entity clk is
 end entity;
 
 architecture rtl of clk is
-	constant MAX: positive := 1_000_000 * SYS_CLK_FRQ / BAUDRATE; /* max */
+	constant MAX: positive := 1_000_000 * SYS_CLK_FRQ / BAUDRATE;
 	signal cnt: natural range 0 to MAX - 1 := 0;
 	signal reg: std_logic := '0'; /* output register */
 begin
